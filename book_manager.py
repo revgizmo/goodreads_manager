@@ -339,6 +339,8 @@ class Book():
                     print(f"Changing book status to: {self.book_status}")
         else:
             self.add_review(review)
+        for bookshelf in self.bookshelves:
+            bookshelf.add_book(self)
         Book.book_count += 1
 
     def __lt__(self, other):
