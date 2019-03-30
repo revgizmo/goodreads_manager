@@ -1,0 +1,675 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt]{article}
+
+    
+    
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{conor\_healy\_project\_1\_reflections\_document}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \section{My Project: book\_manager.py}\label{my-project-book_manager.py}
+
+\subsection{Summary}\label{summary}
+
+\begin{itemize}
+\tightlist
+\item
+  book\_manager.py is a tool to manage books, ratings, reviews and
+  thoughts.
+\item
+  It includes 4 classes:
+\item
+  Bookshelf(): An entity that represents a place for all my books.
+\item
+  Book(): An entity that represents a book and associated data.
+\item
+  Review(): An entity that represents a book review and associated data.
+\item
+  BookshelfManager: An entity that creates new/loads instances of the
+  bookshelf, book, and review objects and allows for user interaction.
+\item
+  I tried to manage data quality by managing user input at data entry,
+  usually by requiring the user to input valid data before moving on.
+  For this project, it was not practical to include validation for most
+  text input fields (book title, Big Idea, etc.).
+\item
+  When book\_manager.py is loaded, all 4 classes are loaded and a single
+  call is made to BookshelfManager(). From there, the user interacts
+  with the BookshelfManager() instance.
+\end{itemize}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  First, the user is provided with a description of the program and
+  instructions to load or add a bookshelf.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The user can choose an existing bookshelf file to load. The
+    bookshelf files are created using the pickle module and
+    automatically saved by book\_manager.py with a ".bkshlf" extension.
+  \item
+    The user can also choose to add a new bookshelf and is prompted to
+    name their bookshelf
+  \end{itemize}
+\item
+  Once the bookshelf is loaded/created, the user is provided with the
+  Main Menu and instructed to choose an option. The menu will repet
+  until the user chooses a valid option. The user can Enter:
+
+  \begin{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{11}
+    \tightlist
+    \item
+      to (L)ist my books
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{5}
+    \tightlist
+    \item
+      to (F)ilter my books
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{19}
+    \tightlist
+    \item
+      to sor(T) my books
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{6}
+    \tightlist
+    \item
+      to (G)et the info about a book
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \tightlist
+    \item
+      to (A)dd a book
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{17}
+    \tightlist
+    \item
+      to (R)eview a book
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{2}
+    \tightlist
+    \item
+      to save and (C)lose
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{16}
+    \tightlist
+    \item
+      to (Q)uit without saving
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{18}
+    \tightlist
+    \item
+      to (S)ettings
+    \end{enumerate}
+  \end{itemize}
+\item
+  Each menu option has unique behavior:
+
+  \begin{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{11}
+    \tightlist
+    \item
+      to (L)ist my books
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Prints out the books in an ascii bookshelf
+    \end{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{5}
+    \tightlist
+    \item
+      to (F)ilter my books
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Asks the user to choose a method to filter the books
+    \item
+      Multiple filters can be applied. Each selection in the filter menu
+      is applied against the books remaining after previous filters.
+    \item
+      Also, users can reset all filters and sorts or back out to the
+      Main Menu
+    \end{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{19}
+    \tightlist
+    \item
+      to sor(T) my books
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Asks the user to choose a method to sort the books. Once a sort is
+      chosen, the user is prompted to choose whether to sort ascending
+      or descending
+    \item
+      Multiple sorts can be applied. Each selection in the filter menu
+      is applied against the book list sorted by previous sorts. If one
+      wanted to sort by multiple sorts intentionally (e.g. by Author
+      then by Title), then the sorts should be applied backwards (First
+      by Title, then by Author) to get the right result.
+    \item
+      Also, users can back out to the Main Menu.
+    \end{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{6}
+    \tightlist
+    \item
+      to (G)et the info about a book
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Prints out the books in an ascii bookshelf
+    \item
+      Asks the user to choose a book based on it's position in the
+      bookshelf
+    \item
+      Prints details about the book
+    \end{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \tightlist
+    \item
+      to (A)dd a book
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Prompts the user to add a book.
+    \item
+      If "Want to Review" is chosen as the status, the user is prompted
+      for whether they want to review the book now.
+
+      \begin{itemize}
+      \tightlist
+      \item
+        If yes, the user is prompted to add a review
+      \item
+        If no, the book status is changed to "Read, but not reviewed"
+      \end{itemize}
+    \end{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{17}
+    \tightlist
+    \item
+      to (R)eview a book
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Prints out the books in an ascii bookshelf
+    \item
+      Asks the user to choose a book based on it's position in the
+      bookshelf
+    \item
+      Prompts the user to add a review.
+    \end{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{2}
+    \tightlist
+    \item
+      to save and (C)lose
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      saves the bookshelf with the pickle method using the name of the
+      bookshelf and a ".bkshlf" file extension
+    \item
+      Exits the program
+    \end{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{16}
+    \tightlist
+    \item
+      to (Q)uit without saving
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Prompts the user to enter "Quit"
+
+      \begin{itemize}
+      \tightlist
+      \item
+        If the user enters "Quit", exits the program.
+      \item
+        If not, returns to the Main Menu
+      \end{itemize}
+    \end{itemize}
+  \item
+    \begin{enumerate}
+    \def\labelenumii{(\Alph{enumii})}
+    \setcounter{enumii}{18}
+    \tightlist
+    \item
+      to (S)ettings
+    \end{enumerate}
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Prompts the user with choices to to:
+
+      \begin{itemize}
+      \tightlist
+      \item
+        Reset the bookshelf by removing all filters and sort and
+        recalculating all counters.
+      \item
+        See any Beta test features (currently a printout of the
+        bookshelf, books, an example book, and the bookshelf associated
+        wiht the example book)
+      \item
+        Back out to the Main Menu.
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Testing \& Using
+book\_manager.py:}\label{testing-using-book_manager.py}
+
+\begin{itemize}
+\tightlist
+\item
+  Hopefully, the Summary above covers the functionality pretty well. A
+  simple \texttt{python\ book\_manager.py} command should load and run
+  the project.
+\item
+  I created this project using a Mac, but don't anticipate any problems
+  running it on windows or linux.
+\item
+  I am providing a demo bookshelf (demo.bkshlf) pre-loaded with 25 books
+  and 4 reviews. The file can be loaded by choosing (L) at the intial
+  prompt, then typing the path to the file.
+\item
+  A new bookshelf can also be created. Be careful to name it something
+  other than "demo" or the file I provided will be overwritten.
+\end{itemize}
+
+\subsection{Challenges}\label{challenges}
+
+\begin{itemize}
+\tightlist
+\item
+  This was a great project that helped me learn quite a bit about python
+  and object oriented programming.
+\item
+  I also tried my hand at git branching, and think it could be
+  recommended for students in the future. Class development seems ideal
+  as a toy example for feature development, and a reference document /
+  optional async would have been useful.
+\item
+  My biggest challenge was project scope. Adding book details with user
+  prompts + sort + filters + printing out bookshelves, book details, and
+  review details made for a bigger project that first anticipated. (I
+  got instructor approval to go over the 750 line limit to get it all
+  in, and still left some valuable features on the Future Enhancements
+  list).
+\item
+  My second biggest challenge was workflow related. We haven't covered
+  use of an IDE in this course, but jupyter notebooks are not well
+  suited for this kind of development. I ended up with a hybrid workflow
+  that got me done, but I look forward to finding a better tool for
+  development work.
+\item
+  I tried briefly to get Goodreads integration working, but I found that
+  the Goodreads import and export .csv files are not compatible and are
+  not documented. I plan to play with the import functionality in the
+  future, and then build a Save to Goodreads.csv option once I
+  understand what Goodreads wants as an import.
+\item
+  I ran into bugs while developing the project, but most of my issues
+  seemed to be about the quirks of this project that would likely be
+  replaced by more sophisticated tools in production:
+\item
+  building the ascii bookshelf to display the books
+\item
+  setting up the multi\_input function to allow users to enter multiple
+  lines of input.
+\item
+  There are a few places where I use a long series of elif statements to
+  dynamically return different attributes/results, and I'm sure there's
+  a better way to code them. However, it is functional so I chose to
+  focus elsewhere.
+\end{itemize}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}

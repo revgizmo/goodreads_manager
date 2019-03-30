@@ -1,0 +1,9 @@
+digraph "classes" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{Book|add_book_statuses : dict\lauthor : NoneType\lbook_status : str\lbook_statuses : dict\lbookshelves : list\ldate_added : date\lisbn : NoneType\lother : str, NoneType\lrecommended_by : NoneType\lreviews : list\lsort_val : NoneType\ltitle : NoneType\lurl : NoneType\l|add_review()\ladd_to_bookshelf()\lget_book_info()\lget_title()\linput_book_status()\lprint_reviews()\lsort_book()\l}", shape="record"];
+"1" [label="{Bookshelf|books : list\lbooks_count : int\lbookshelves : list\ldate_added : date\lfilter_type : str, NoneType\lfiltered_books : list\lname : str\lreviews_count : int\lsort_val : str\l|add_book()\lfilter_books()\lfilter_books_status()\lget_books()\lget_bookshelves()\lload_bookshelf()\lmulti_input()\lprint_ascii_books()\lprint_books_info()\lprint_books_titles()\lprint_bookshelf_summary()\lprint_reviews()\lreset_bookshelf()\lsave_bookshelf()\lsort_books()\l}", shape="record"];
+"2" [label="{BookshelfManager|bookshelf\lfilters_dict : dict\lmenu : dict\lsettings_dict : dict\lsorts_dict : dict\l|choose_book()\lfilter_books()\lget_book_info()\linput_book_choice()\lintro()\llist_books()\lload_or_add_bookshelf()\lreview_a_book()\lsettings()\lsort_books()\l}", shape="record"];
+"3" [label="{Review|actionable_items : str, NoneType\lbig_idea : str, NoneType\ldate_added : date\lend_date : NoneType\lformat_consumed : str\lformats : dict\lhighlights : str, NoneType\lother_notes_takeaways : NoneType, str\lrating : NoneType, int\lrating_range : range\lstart_date : NoneType\ltitle\l|get_title()\linput_format()\lverify_rating()\l}", shape="record"];
+"1" -> "2" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="bookshelf", style="solid"];
+}
