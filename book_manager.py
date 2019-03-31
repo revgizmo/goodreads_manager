@@ -4,6 +4,8 @@ import pickle
 import functools
 import time
 import os
+import numpy as np
+import pandas as pd
 from datetime import date
 
 
@@ -38,6 +40,9 @@ class Bookshelf():
         print_reviews
         print_ascii_books
         multi_input
+        load_good_book_row
+        load_goodreads_csv
+        
     """
     bookshelf_count = 0
     bookshelves = []
@@ -238,6 +243,43 @@ class Bookshelf():
                 break
         return output
 
+    def load_goodreads_csv(self, goodreads_csv_file='no csv'):
+        error_msg = ''
+        while True:
+            try:    
+                csv_data = pd.read_csv(goodreads_csv_file)
+                print("Got Here")
+                csv_data = csv_data.assign(isbn_clean=[x[2:-1] for x in csv_data['ISBN']])
+                csv_data = csv_data.assign(isbn13_clean=[x[2:-1] for x in csv_data['ISBN13']])
+                break
+            except:
+                print(f'{error_msg}Please enter the file path for the Goodreads csv file you want to load. ("path/goodreads_library_export.csv")\nCurrent working directory is: {os.getcwd()}')
+                goodreads_csv_file = input("Enter the file path: ")
+                error_msg = f'Invalid entry - {goodreads_csv_file} - ' #by placing this here, this message will only be added on loops 2+
+        csv_data.apply(lambda x: Bookshelf.load_good_book_row(good_book_row = x, bookshelf_list = self.bookshelves), axis=1)
+
+    def load_good_book_row(good_book_row, bookshelf_list):
+        book_review = None    
+        if pd.notnull(good_book_row['My Review']):
+            book_review = Review(book=good_book_row['Title'],
+                                 rating=good_book_row['My Rating'],
+                                 start_date=good_book_row['Date Read'],
+                                 end_date=good_book_row['Date Read'],
+                                 big_idea='',
+                                 highlights='',
+                                 actionable_items='',
+                                 other_notes_takeaways=good_book_row['My Review'],
+                                 format_consumed=4)
+
+        book = Book(title=good_book_row['Title'],
+                    author=good_book_row['Author'],
+                    isbn=good_book_row['isbn_clean'],
+                    book_status=1 if good_book_row['Exclusive Shelf'] == 'to-read' else 3,
+                    bookshelves = bookshelf_list,
+                    review = book_review
+                   )
+        print(f"\n{good_book_row['Title']} added to {bookshelf_list}")
+
 
 @functools.total_ordering
 class Book():
@@ -293,7 +335,7 @@ class Book():
                  isbn=None,
                  url=None,
                  recommended_by=None,
-                 other=None,
+                 other='',
                  book_status=1,
                  bookshelves=[],
                  review=None):
@@ -325,8 +367,8 @@ class Book():
             self.bookshelves = bookshelves
             self.sort_val = self.title
             self.date_added = date.today()
+        self.reviews = []
         if review is None:
-            self.reviews = []
             if self.book_status == 'Reviewed':
                 print('\nWould you like to review this book now? (1 = Yes, Anything else = No)')
                 try:
@@ -485,7 +527,7 @@ class Book():
         """Method to print the reviews of the book."""
         if self.reviews:
             for review in self.reviews:
-                pprint(review, '\n')
+                print(review, '\n')
         else:
             print(f"{self.title}: No reviews yet!")
 
@@ -657,6 +699,7 @@ class BookshelfManager:
         'T': 'sor(T) my books',
         'G': '(G)et the info about a book',
         'A': '(A)dd a book',
+        'O': 'l(O)ad a goodreads csv file',        
         'R': '(R)eview a book',
         'C': 'save and (C)lose',
         'Q': '(Q)uit without saving',
@@ -727,6 +770,8 @@ class BookshelfManager:
                 self.get_book_info()
             elif menu_option == "A":
                 self.bookshelf.add_book()
+            elif menu_option == "O":
+                self.bookshelf.load_goodreads_csv()
             elif menu_option == "R":
                 self.review_a_book()
             elif menu_option == "S":
