@@ -42,7 +42,7 @@ class Bookshelf():
         multi_input
         load_good_book_row
         load_goodreads_csv
-        
+
     """
     bookshelf_count = 0
     bookshelves = []
@@ -85,8 +85,8 @@ class Bookshelf():
         return Bookshelf.bookshelves
 
     def reset_bookshelf(self):
-        """Method to reset the bookshelf. All filters and sort are removed by resetting the 
-        filtered_books list to match the original books list.  
+        """Method to reset the bookshelf. All filters and sort are removed by resetting the
+        filtered_books list to match the original books list.
         All counters are reset to 0 then recalculated.
         """
         Bookshelf.bookshelf_count = len(Bookshelf.bookshelves)
@@ -178,27 +178,26 @@ class Bookshelf():
         else:
             print("No books to print reviews for: Bookshelf is empty!  Find some books!")
 
-    def print_ascii_books(self,
+    def print_ascii_books(bookshelf,
                           letters_per_ascii_book=20,
-                          ascii_books_per_row=14):
-        """method to print the bookshelf in ascii art format, sorted by the value provided.
+                          ascii_books_per_row=10):
+        '''method to print the bookshelf in ascii art format, sorted by the value provided.
         The height of each shelf/book can be controlled by the letters_per_ascii_book, and
         the width can be controlled by the ascii_books_per_row.
 
-        Format inspired by https://codegolf.stackexchange.com/questions/111833/ascii-bookshelves
-        """
+        Format inspired by https://codegolf.stackexchange.com/questions/111833/ascii-bookshelves'''
 
-        print(f'\n Bookshelf: {self}\t\tFilter: {self.filter_type}\tSort: {self.sort_val}')
-        books = [book.get_title() for book in self.filtered_books]
+        print(f'\n Bookshelf: {bookshelf}\t\tFilter: {bookshelf.filter_type}\tSort: {bookshelf.sort_val}')
+        books = [book.get_title() for book in bookshelf.filtered_books]
         num_books = len(books)
         books_count = len(books)
-        k = '|' + '-----' * ascii_books_per_row + '|'
+        k = '|' + '-------' * ascii_books_per_row + '|'
         if books_count:
             while books_count:
                 books_in_row = books_count % ascii_books_per_row or ascii_books_per_row
                 print(k + '\n' +
-                      ('|' + '     ' * (ascii_books_per_row - books_in_row) +
-                       '/___/' * books_in_row + '|'))
+                      ('|' + '       ' * (ascii_books_per_row - books_in_row) +
+                       '/_____/' * books_in_row + '|'))
                 num_letters = letters_per_ascii_book
                 while num_letters:
                     book_string = ''
@@ -211,19 +210,20 @@ class Bookshelf():
                                 letters_per_ascii_book - num_letters]
                         else:
                             book_string_letter = ' '
-                        book_string += f'| {book_string_letter} |'
-                        col_string += f' {num_books - books_count + i + 1:-2}  '
-                    print('|' + '     ' * (ascii_books_per_row - books_in_row) +
+                        book_string += f'|  {book_string_letter}  |'
+                        book_num = num_books - books_count + i + 1
+                        col_string += f'  {book_num:-3}  '
+                    print('|' + '       ' * (ascii_books_per_row - books_in_row) +
                           book_string + '|')
                     num_letters -= 1
-                print('|' + '     ' * (ascii_books_per_row - books_in_row) +
-                      "^---^" * books_in_row + '|' + '\n' + k)
-                print('|' + '     ' * (ascii_books_per_row - books_in_row) +
+                print('|' + '       ' * (ascii_books_per_row - books_in_row) +
+                      "^-----^" * books_in_row + '|' + '\n' + k)
+                print('|' + '       ' * (ascii_books_per_row - books_in_row) +
                       col_string + '|')
                 books_count -= books_in_row
         else:
-            print(k + '\n' + ('|' + '     ' * ascii_books_per_row + '|' + '\n') *
-                  (letters_per_ascii_book + 2) + k)
+            print(k + '\n' + ('|' + '       ' * ascii_books_per_row + '|' + '\n') *
+                  (letters_per_ascii_book + 4) + k)
             print("No books to print: Bookshelf is empty!  Find some books!")
 
     def multi_input(instructions='Enter the string and then press ENTER twice to end your input:'):
@@ -246,11 +246,15 @@ class Bookshelf():
     def load_goodreads_csv(self, goodreads_csv_file='no csv'):
         error_msg = ''
         while True:
-            try:    
+            try:
                 csv_data = pd.read_csv(goodreads_csv_file)
-                print("Got Here")
                 csv_data = csv_data.assign(isbn_clean=[x[2:-1] for x in csv_data['ISBN']])
                 csv_data = csv_data.assign(isbn13_clean=[x[2:-1] for x in csv_data['ISBN13']])
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<The_Big_Idea>(?<=The Big Idea:).*?(?=Highlights:))').fillna(''))
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Highlights>(?<=Highlights:).*?(?=Actionable Items:))').fillna(''))
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Actionable_Items>(?<=Actionable Items:).*?(?=Other Notes & Takeaways:))').fillna(''))
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Other_Notes_and_Takeaways>(?<=Other Notes & Takeaways:).*?(?=Format Consumed:))').fillna(''))
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Format_Consumed>(?<=Format Consumed:<br\/>).*?(?=$))').fillna(''))
                 break
             except:
                 print(f'{error_msg}Please enter the file path for the Goodreads csv file you want to load. ("path/goodreads_library_export.csv")\nCurrent working directory is: {os.getcwd()}')
@@ -261,17 +265,20 @@ class Bookshelf():
     def load_good_book_row(good_book_row, bookshelf_list):
         book_review = None    
         if pd.notnull(good_book_row['My Review']):
+            try: 
+                review_format_consumed = Review.formats_rev[good_book_row['Format_Consumed']] if good_book_row['Format_Consumed'] != '' else 4
+            except:
+                review_format_consumed = 4
             book_review = Review(book=good_book_row['Title'],
                                  rating=good_book_row['My Rating'],
                                  start_date=good_book_row['Date Read'],
                                  end_date=good_book_row['Date Read'],
-                                 big_idea='',
-                                 highlights='',
-                                 actionable_items='',
-                                 other_notes_takeaways=good_book_row['My Review'],
-                                 format_consumed=4)
-
-        book = Book(title=good_book_row['Title'],
+                                 big_idea=good_book_row['The_Big_Idea'] if good_book_row['Other_Notes_and_Takeaways'] != '' else '',
+                                 highlights=good_book_row['Highlights'] if good_book_row['Other_Notes_and_Takeaways'] != '' else '',
+                                 actionable_items=good_book_row['Actionable_Items'] if good_book_row['Other_Notes_and_Takeaways'] != '' else '',
+                                 other_notes_takeaways=good_book_row['Other_Notes_and_Takeaways'] if good_book_row['Other_Notes_and_Takeaways'] != '' else good_book_row['My Review'],
+                                 format_consumed= review_format_consumed)
+        Book(title=good_book_row['Title'],
                     author=good_book_row['Author'],
                     isbn=good_book_row['isbn_clean'],
                     book_status=1 if good_book_row['Exclusive Shelf'] == 'to-read' else 3,
@@ -296,7 +303,7 @@ class Book():
         isbn
         url (to Amazon/goodreads/etc.)
         recommended_by (who recommended the book)
-        other (text field for whatever additional notes the user would like to 
+        other (text field for whatever additional notes the user would like to
             record about the book, not including review information)
         book_status - (possible statuses of the book: "Want to Read", etc.)
         bookshelves (list of bookshelves the book has been added to)
@@ -540,6 +547,7 @@ class Review():
                          2: "eBook",
                          3: "Audiobook",
                          4: "Other"
+        Review.formats_rev (reverse of formats dictionary for easy lookup by format name)
         Review.rating_range (1-5)
         Review.review_count
         book (the book being reviewed)
@@ -558,6 +566,7 @@ class Review():
         get_title
     """
     formats = {1: "Physical Book", 2: "eBook", 3: "Audiobook", 4: "Other"}
+    formats_rev = {value: key for key, value in formats.items()}
     rating_range = range(1, 6)
     review_count = 0
 
@@ -699,7 +708,7 @@ class BookshelfManager:
         'T': 'sor(T) my books',
         'G': '(G)et the info about a book',
         'A': '(A)dd a book',
-        'O': 'l(O)ad a goodreads csv file',        
+        'O': 'l(O)ad a goodreads csv file',
         'R': '(R)eview a book',
         'C': 'save and (C)lose',
         'Q': '(Q)uit without saving',
