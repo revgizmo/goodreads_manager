@@ -4,9 +4,8 @@ import pickle
 import functools
 import time
 import os
-import numpy as np
-import pandas as pd
 from datetime import date
+import pandas as pd
 
 
 class Bookshelf():
@@ -65,12 +64,35 @@ class Bookshelf():
     def __str__(self):
         return self.__repr__()
 
-    @classmethod
-    def load_bookshelf(cls, file):
+    @staticmethod
+    def multi_input(instructions='Enter the string and then press ENTER twice to end your input:'):
+        """Method to allow users to enter multiple lines of input using the input() function.
+        Recurring input is ended when the user inputs a null value (by pressing ENTER twice).
+
+        Args:
+            instructions (provided to the user to explain how the input will work)
+        """
+        output = ''
+        print(instructions)
+        while True:
+            user_string = input()
+            if user_string:
+                output = output + '\n' + user_string
+            else:
+                break
+        return output
+
+    @staticmethod
+    def load_bookshelf(file):
         """Method to load the bookshelf. Args:
             file = the file you want to open (usually named <file>.bkshlf)
         """
         return pickle.load(open(file, "rb"))
+
+    @classmethod
+    def get_bookshelves(cls):
+        """Method that returns the list of all bookshelves."""
+        return cls.bookshelves
 
     def save_bookshelf(self):
         """Method to save the bookshelf."""
@@ -79,10 +101,6 @@ class Bookshelf():
     def get_books(self):
         """Method that returns the list of filtered books."""
         return self.filtered_books
-
-    def get_bookshelves():
-        """Method that returns the list of all bookshelves."""
-        return Bookshelf.bookshelves
 
     def reset_bookshelf(self):
         """Method to reset the bookshelf. All filters and sort are removed by resetting the
@@ -178,7 +196,7 @@ class Bookshelf():
         else:
             print("No books to print reviews for: Bookshelf is empty!  Find some books!")
 
-    def print_ascii_books(bookshelf,
+    def print_ascii_books(self,
                           letters_per_ascii_book=20,
                           ascii_books_per_row=10):
         '''method to print the bookshelf in ascii art format, sorted by the value provided.
@@ -187,8 +205,8 @@ class Bookshelf():
 
         Format inspired by https://codegolf.stackexchange.com/questions/111833/ascii-bookshelves'''
 
-        print(f'\n Bookshelf: {bookshelf}\t\tFilter: {bookshelf.filter_type}\tSort: {bookshelf.sort_val}')
-        books = [book.get_title() for book in bookshelf.filtered_books]
+        print(f'\n Bookshelf: {self}\t\tFilter: {self.filter_type}\tSort: {self.sort_val}')
+        books = [book.get_title() for book in self.filtered_books]
         num_books = len(books)
         books_count = len(books)
         k = '|' + '-------' * ascii_books_per_row + '|'
@@ -226,46 +244,43 @@ class Bookshelf():
                   (letters_per_ascii_book + 4) + k)
             print("No books to print: Bookshelf is empty!  Find some books!")
 
-    def multi_input(instructions='Enter the string and then press ENTER twice to end your input:'):
-        """Method to allow users to enter multiple lines of input using the input() function.
-        Recurring input is ended when the user inputs a null value (by pressing ENTER twice).
-
-        Args:
-            instructions (provided to the user to explain how the input will work)
-        """
-        output = ''
-        print(instructions)
-        while True:
-            s = input()
-            if s:
-                output = output + '\n' + s
-            else:
-                break
-        return output
-
     def load_goodreads_csv(self, goodreads_csv_file='no csv'):
+        '''method to load standard goodreads csv file into the current bookshelf.
+        The file path and name must be entered by the user.'''
+
         error_msg = ''
         while True:
             try:
                 csv_data = pd.read_csv(goodreads_csv_file)
                 csv_data = csv_data.assign(isbn_clean=[x[2:-1] for x in csv_data['ISBN']])
                 csv_data = csv_data.assign(isbn13_clean=[x[2:-1] for x in csv_data['ISBN13']])
-                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<The_Big_Idea>(?<=The Big Idea:).*?(?=Highlights:))').fillna(''))
-                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Highlights>(?<=Highlights:).*?(?=Actionable Items:))').fillna(''))
-                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Actionable_Items>(?<=Actionable Items:).*?(?=Other Notes & Takeaways:))').fillna(''))
-                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Other_Notes_and_Takeaways>(?<=Other Notes & Takeaways:).*?(?=Format Consumed:))').fillna(''))
-                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Format_Consumed>(?<=Format Consumed:<br\/>).*?(?=$))').fillna(''))
+                csv_data['My Review'].replace('<br\/>', '\\n', regex=True, inplace=True)
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<The_Big_Idea>(?<=The Big Idea:)[\s\S]*?(?=Highlights:))')\
+                                         .fillna('').apply(lambda x: x.str.strip()))
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Highlights>(?<=Highlights:)[\s\S]*?(?=Actionable Items:))')\
+                                         .fillna('').apply(lambda x: x.str.strip()))
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Actionable_Items>(?<=Actionable Items:)[\s\S]*?(?=Other Notes & Takeaways:))')\
+                                         .fillna('').apply(lambda x: x.str.strip()))
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Other_Notes_and_Takeaways>(?<=Other Notes & Takeaways:)[\s\S]*?(?=Format Consumed:))')\
+                                         .fillna('').apply(lambda x: x.str.strip()))
+                csv_data = csv_data.join(csv_data['My Review'].str.extract(r'(?P<Format_Consumed>(?<=Format Consumed:)[\s\S]*?(?=$))')\
+                                         .fillna('').apply(lambda x: x.str.strip()))
                 break
             except:
-                print(f'{error_msg}Please enter the file path for the Goodreads csv file you want to load. ("path/goodreads_library_export.csv")\nCurrent working directory is: {os.getcwd()}')
+                print(f'{error_msg}Please enter the file path for the Goodreads csv file you want to load. \
+                      ("path/goodreads_library_export.csv")\nCurrent working directory is: {os.getcwd()}')
                 goodreads_csv_file = input("Enter the file path: ")
                 error_msg = f'Invalid entry - {goodreads_csv_file} - ' #by placing this here, this message will only be added on loops 2+
-        csv_data.apply(lambda x: Bookshelf.load_good_book_row(good_book_row = x, bookshelf_list = self.bookshelves), axis=1)
+        csv_data.apply(lambda x: Bookshelf.load_good_book_row(good_book_row=x, bookshelf_list=self.bookshelves), axis=1)
 
+    @staticmethod
     def load_good_book_row(good_book_row, bookshelf_list):
-        book_review = None    
+        '''static method to load a from a goodreads csv export file into a Book object
+        with an associated Review (if any).'''
+
+        book_review = None
         if pd.notnull(good_book_row['My Review']):
-            try: 
+            try:
                 review_format_consumed = Review.formats_rev[good_book_row['Format_Consumed']] if good_book_row['Format_Consumed'] != '' else 4
             except:
                 review_format_consumed = 4
@@ -276,15 +291,16 @@ class Bookshelf():
                                  big_idea=good_book_row['The_Big_Idea'] if good_book_row['Other_Notes_and_Takeaways'] != '' else '',
                                  highlights=good_book_row['Highlights'] if good_book_row['Other_Notes_and_Takeaways'] != '' else '',
                                  actionable_items=good_book_row['Actionable_Items'] if good_book_row['Other_Notes_and_Takeaways'] != '' else '',
-                                 other_notes_takeaways=good_book_row['Other_Notes_and_Takeaways'] if good_book_row['Other_Notes_and_Takeaways'] != '' else good_book_row['My Review'],
-                                 format_consumed= review_format_consumed)
+                                 other_notes_takeaways=good_book_row['Other_Notes_and_Takeaways'] if good_book_row['Other_Notes_and_Takeaways'] != '' \
+                                     else good_book_row['My Review'],
+                                 format_consumed=review_format_consumed)
         Book(title=good_book_row['Title'],
-                    author=good_book_row['Author'],
-                    isbn=good_book_row['isbn_clean'],
-                    book_status=1 if good_book_row['Exclusive Shelf'] == 'to-read' else 3,
-                    bookshelves = bookshelf_list,
-                    review = book_review
-                   )
+             author=good_book_row['Author'],
+             isbn=good_book_row['isbn_clean'],
+             book_status=1 if good_book_row['Exclusive Shelf'] == 'to-read' else 3,
+             bookshelves=bookshelf_list,
+             review=book_review
+             )
         print(f"\n{good_book_row['Title']} added to {bookshelf_list}")
 
 
@@ -344,7 +360,7 @@ class Book():
                  recommended_by=None,
                  other='',
                  book_status=1,
-                 bookshelves=[],
+                 bookshelves=list(),
                  review=None):
         if title is None:
             print('Please enter the information for your book.')
@@ -493,7 +509,8 @@ class Book():
             bookshelf.add_book(self)
             print(f"{self} added to {bookshelf}")
 
-    def input_book_status(self):
+    @classmethod
+    def input_book_status(cls):
         """method to gather book_status from users, until the user inputs a valid book_status.
         Possible states:
             1. no book_status provided
@@ -607,7 +624,8 @@ class Review():
             self.date_added = date.today()
         Review.review_count += 1
 
-    def input_format(self):
+    @classmethod
+    def input_format(cls):
         """method to gather format from users, until the user inputs a valid format.
         Possible states:
             1. no format provided
@@ -618,21 +636,22 @@ class Review():
 
         while True:
             print('Enter a number corresponding to the format of the book:')
-            for item in Review.formats:
-                print(f'\t{item} = "{Review.formats[item]}"')
+            for item in cls.formats:
+                print(f'\t{item} = "{cls.formats[item]}"')
             format_option = input('\tEntry: ')
 
             try:
                 format_option = int(format_option)
-                if format_option in Review.formats.keys():
+                if format_option in cls.formats.keys():
                     break
                 else:
                     raise
             except:
                 print(f"Your entry '{format_option}' is not recognized\n")
-        return Review.formats[format_option]
+        return cls.formats[format_option]
 
-    def verify_rating(self, rating=None):
+    @classmethod
+    def verify_rating(cls, rating=None):
         """method to verify if rating is in the rating_range.
         Possible states:
             1. no rating provided
@@ -642,7 +661,7 @@ class Review():
         """
         if rating is None:
             rating = input(f"\nEnter a rating ({Review.rating_range[0]}-{Review.rating_range[-1]} as an integer): ")
-        while rating not in Review.rating_range or not isinstance(rating, int):
+        while rating not in cls.rating_range or not isinstance(rating, int):
             try:
                 rating = int(rating)
                 if rating not in range(1, 6):
@@ -800,7 +819,8 @@ class BookshelfManager:
                 print(f'{self.bookshelf} saved as {self.bookshelf}.bkshlf. Have a wonderful day!\n')
                 break
 
-    def intro(self):
+    @staticmethod
+    def intro():
         """Method to print the user introduction to the BookshelfManager and menus."""
         print()
         print("Let's manage our bookshelf.")
@@ -848,6 +868,8 @@ class BookshelfManager:
             print()
 
     def list_books(self):
+        """Method to list the books in the bookshelf. Currently calls print_ascii_books()"""
+
         os.system('clear')
         self.bookshelf.print_ascii_books()
 
@@ -941,10 +963,7 @@ class BookshelfManager:
                     else:
                         os.system('clear')
                         print(f"Your entry '{sort_order}' is not recognized")
-                if sort_order == "D":
-                    reverse_option = True
-                else:
-                    reverse_option = False
+                reverse_option = True if sort_order == "D" else False
                 self.bookshelf.sort_books(sort_val=sorts_dict[sort_option], reverse_arg=reverse_option)
                 print(f"\n'{self.bookshelf}' has been sorted by book {sorts_dict[sort_option]} {sort_order_dict[sort_order]}.\n")
                 break
